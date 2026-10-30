@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Multiversal War - Remastered</title>
+<style>
+html,body{margin:0;height:100%;background:#0d0f18;overflow:hidden;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:bold;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,12,20,.88);color:#fff;gap:10px;padding:12px;box-sizing:border-box;overflow:auto;backdrop-filter:blur(5px)}
+.ov h1{margin:0;font-size:24px;text-shadow:0 0 10px rgba(224,184,99,.5)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.card{background:#232a40;border:2px solid #3b4468;border-radius:12px;padding:10px;width:170px;cursor:pointer;font-size:13px;transition:0.2s}
+.card:active{border-color:#ff5fa2;transform:scale(0.98)}
+.card b{font-size:15px}
+.card i{display:block;font-style:normal;color:#aab;margin-top:3px}
+button{font-size:16px;padding:10px 22px;border-radius:10px;border:0;background:#ff5fa2;color:#fff;cursor:pointer;transition:0.2s}
+button:hover{opacity:0.9;transform:translateY(-1px)}
+.hide{display:none}
+#menu{background:linear-gradient(160deg,#0a1030,#1b1f4a 60%,#2a1a3f);padding:0;gap:0;align-items:stretch;justify-content:flex-start;overflow:hidden}
+#sel{display:flex;height:100%;width:100%}
+#hl{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:6px;min-width:0}
+#hb{width:clamp(90px,26vmin,170px);height:clamp(90px,26vmin,170px);border-radius:50%;border:3px solid #e0b863;display:flex;align-items:center;justify-content:center;font-size:clamp(44px,13vmin,84px);box-shadow:0 0 30px rgba(224,184,99,.4)}
+#hb.art{width:clamp(170px,58vmin,330px);height:clamp(96px,32.6vmin,186px);border-radius:14px;overflow:hidden}
+#abtn{font-size:12px;padding:5px 14px;border-radius:16px;background:#26264f;border:1.5px solid #e0b863;color:#f3d27a}
+#hn{margin:0;font-size:22px}
+#hs{display:flex;gap:8px}
+.sk{width:58px;padding:6px 0;text-align:center;font-size:24px;background:#151b3d;border:2px solid #4a4f7a;border-radius:10px;cursor:pointer}
+.sk small{display:block;font-size:10px;color:#cdd}
+.sk.on{border-color:#e0b863;background:#26264f;box-shadow:0 0 8px #e0b863}
+#ht{max-width:340px;font-size:13px;text-align:center;background:rgba(0,0,0,.35);border:1px solid #4a4f7a;border-radius:10px;padding:8px;min-height:64px;overflow:auto;max-height:28vh}
+#hr{flex:1.1;display:flex;flex-direction:column;padding:10px;gap:8px;min-width:0;background:rgba(0,0,0,.25);border-left:2px solid #e0b863}
+.tt{color:#e0b863;font-weight:bold;letter-spacing:1px}
+#cards{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;align-content:start;overflow:auto}
+.hc{text-align:center;font-size:11px;cursor:pointer;border:2px solid #4a4f7a;border-radius:10px;padding:4px;background:#151b3d;transition:0.2s}
+.hc.on{border-color:#e0b863;box-shadow:0 0 12px #e0b863}
+.av{height:54px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:3px}
+#go{background:linear-gradient(#f3d27a,#c28a2b);color:#3a2300;font-weight:bold;padding:12px;font-size:18px;border-radius:10px;box-shadow:0 0 14px rgba(224,184,99,.5)}
+@media(orientation:portrait){#sel{flex-direction:column}#hr{border-left:0;border-top:2px solid #e0b863}#hl{flex:none}}
+
+input{font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:2px solid #4a4f7a;background:#10163a;color:#fff;width:100%;box-sizing:border-box;user-select:text;-webkit-user-select:text;outline:0}
+input:focus{border-color:#e0b863}
+.box{background:rgba(15,20,50,.94);border:2px solid #e0b863;border-radius:14px;padding:16px;width:min(360px,92vw);display:flex;flex-direction:column;gap:10px;box-sizing:border-box;max-height:96vh;overflow:auto}
+.tabs{display:flex;gap:6px}.tabs button{flex:1;background:#151b3d;border:2px solid #4a4f7a;padding:8px;font-size:14px}.tabs button.on{border-color:#e0b863;color:#f3d27a}
+.gold{background:linear-gradient(#f3d27a,#c28a2b);color:#3a2300;font-weight:bold}
+.ib{width:42px;height:42px;padding:0;border-radius:50%;background:#26264f;border:2px solid #e0b863;font-size:20px;flex:none;display:flex;align-items:center;justify-content:center}
+.err{color:#ff8a80;font-size:12px;min-height:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;align-items:center}.chips span{background:#26264f;border:1px solid #e0b863;border-radius:14px;padding:3px 10px;cursor:pointer}
+.ck{display:flex;align-items:center;gap:8px;font-size:13px}.ck input{width:auto}
+#auth,#lobby{background:radial-gradient(circle at 50% 35%,#2b2a6a,#0a1030 70%)}
+#lobby{padding:0;gap:0;justify-content:flex-start;align-items:stretch;overflow:hidden}
+#lbTop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,.35);border-bottom:2px solid #e0b863}
+#pf{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+#pfImg{width:44px;height:44px;border-radius:50%;border:2px solid #e0b863;object-fit:contain;image-rendering:pixelated;background:#151b3d}
+#pf small{display:block;color:#f3d27a;font-size:11px}
+#lbMid{flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;min-height:0;overflow:auto}
+#lbNav{display:flex;flex-direction:column;gap:8px}
+.nv{width:64px;padding:8px 0;font-size:24px;background:#151b3d;border:2px solid #4a4f7a;border-radius:12px;line-height:1}
+.nv small{display:block;font-size:10px;margin-top:3px;color:#cdd}
+#lbHero{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-width:0}
+#lbArt{width:clamp(170px,50vmin,320px);border-radius:14px;border:3px solid #e0b863;box-shadow:0 0 30px rgba(224,184,99,.4)}
+#lbHero h2{margin:0}
+#lbSt{width:150px;background:rgba(0,0,0,.35);border:2px solid #4a4f7a;border-radius:12px;padding:10px;font-size:12px;display:flex;flex-direction:column;gap:6px;box-sizing:border-box}
+#lbSt div{display:flex;justify-content:space-between;gap:6px}#lbSt b{color:#f3d27a}
+#lbBot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:rgba(0,0,0,.35);border-top:2px solid #e0b863;font-size:13px}
+#lbPlay{font-size:20px;padding:14px 34px;border-radius:12px;box-shadow:0 0 16px rgba(224,184,99,.6)}
+@media(orientation:portrait){#lbMid{flex-wrap:wrap;justify-content:center;align-content:center}#lbNav{flex-direction:row;order:3}#lbSt{order:4;width:100%;max-width:340px}#lbHero{flex:none;width:100%;order:1}}
+#gear{position:fixed;top:8px;right:8px;display:none;z-index:10}
+.sl{display:flex;flex-direction:column;gap:4px;font-size:13px}.sl input{padding:0;height:28px;accent-color:#e0b863;border:0;background:none}
+#bk{align-self:flex-start;font-size:13px;padding:6px 14px;background:#26264f;border:2px solid #e0b863}
+#musicTrack{font-size:11px;color:#f3d27a;text-align:center;margin-top:2px}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="menu" class="ov"><div id="sel"><div id="hl"><div id="hb"></div><button id="abtn">🖼 Xem ảnh</button><h2 id="hn"></h2><div id="hs"></div><div id="ht"></div></div><div id="hr"><button id="bk">← Về sảnh</button><div class="tt">🌸 CHỌN TƯỚNG</div><div id="cards"></div><button id="go">BẮT ĐẦU</button></div></div></div>
+<button id="gear" class="ib">⚙</button>
+<div id="auth" class="ov hide"><h1>🌌 Multiversal War</h1><div class="box"><div class="tabs"><button id="tL" class="on">Đăng nhập</button><button id="tR">Tạo tài khoản</button></div><div class="chips" id="saved"></div><input id="aU" placeholder="Tên tài khoản" autocomplete="username" maxlength="16"><input id="aP" type="password" placeholder="Mật khẩu" autocomplete="current-password"><input id="aP2" type="password" placeholder="Nhập lại mật khẩu" class="hide"><label class="ck"><input id="aR" type="checkbox" checked> Ghi nhớ đăng nhập trên máy này</label><div class="err" id="aE"></div><button id="aGo" class="gold">ĐĂNG NHẬP</button><button id="aGuest" style="background:#26264f;font-size:13px">Chơi khách (không lưu)</button><div style="font-size:11px;color:#aab">Tài khoản chỉ lưu trên thiết bị này (trình duyệt), không gửi lên máy chủ.</div><div style="display:flex;gap:6px;justify-content:center"><button id="aBk" style="font-size:12px;background:#26264f">💾 Sao lưu</button><button id="aRs" style="font-size:12px;background:#26264f">📂 Khôi phục</button></div><input id="bkFile" type="file" accept=".txt,.json" class="hide"></div></div>
+<div id="lobby" class="ov hide"><div id="lbTop"><div id="pf"><img id="pfImg"><div><b id="pfName"></b><small id="pfLv"></small></div></div><button class="ib" id="lbSet">⚙</button><button class="ib" id="lbOut" title="Đăng xuất">⎋</button><button class="ib" id="lbBk" title="Sao lưu tài khoản">💾</button></div><div id="lbMid"><div id="lbNav"><button class="nv" id="nvHero">🛡<small>Tướng</small></button><button class="nv" id="nvSet">⚙<small>Cài đặt</small></button></div><div id="lbHero"><img id="lbArt"><h2 id="lbHn"></h2><small style="color:#aab">Chạm để chọn tướng</small></div><div id="lbSt"></div></div><div id="lbBot"><div>⚔ Đánh Boss · Sinh tồn qua các tầng</div><button id="lbPlay" class="gold">VÀO TRẬN</button></div></div>
+<div id="set" class="ov hide"><div class="box"><h1 style="font-size:20px">⚙ Cài đặt âm thanh</h1><label class="sl">Âm lượng tổng: <b id="v1"></b><input id="s1" type="range" min="0" max="100"></label><label class="sl">Nhạc &amp; lãnh địa: <b id="v2"></b><input id="s2" type="range" min="0" max="100"></label><label class="sl">Hiệu ứng chiêu thức: <b id="v3"></b><input id="s3" type="range" min="0" max="100"></label><div id="musicTrack">Đang phát: Lofi Breeze</div><button id="nextTrack" style="background:#26264f">🎵 Bài tiếp</button><button id="sOk" class="gold">XONG</button></div></div>
+<div id="pk" class="ov hide"><h1 id="pt"></h1><div class="row" id="pc"></div></div>
+<div id="end" class="ov hide"><h1 id="et"></h1><button onclick="toMenu()">Chơi lại</button></div>
+
+<script>
+// --- CHILL SYNTH MUSIC PLAYER (WEB AUDIO API) ---
+let audioCtx = null, musicGain = null, masterGain = null, sfxGain = null;
+let currentTrackIdx = 0, isPlayingMusic = false, musicTimer = null;
+
+const tracks = [
+  { name: "Lofi Breeze", bpm: 75, chords: [[261.63, 329.63, 392.00, 493.88], [220.00, 261.63, 329.63, 392.00], [174.61, 220.00, 261.63, 329.63], [196.00, 246.94, 293.66, 349.23]] },
+  { name: "Neon Night Chill", bpm: 85, chords: [[146.83, 220.00, 261.63, 329.63], [174.61, 220.00, 261.63, 349.23], [220.00, 261.63, 329.63, 440.00], [196.00, 246.94, 293.66, 392.00]] },
+  { name: "Cosmic Ambient", bpm: 60, chords: [[130.81, 196.00, 261.63, 329.63], [110.00, 164.81, 220.00, 293.66], [138.59, 207.65, 277.18, 349.23], [146.83, 220.00, 293.66, 369.99]] }
+];
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  musicGain = audioCtx.createGain();
+  sfxGain = audioCtx.createGain();
+  
+  musicGain.connect(masterGain);
+  sfxGain.connect(masterGain);
+  masterGain.connect(audioCtx.destination);
+  
+  updateVolumes();
+  startChillMusic();
+}
+
+function updateVolumes() {
+  if (!audioCtx) return;
+  const v1 = (document.getElementById('s1')?.value || 80) / 100;
+  const v2 = (document.getElementById('s2')?.value || 70) / 100;
+  const v3 = (document.getElementById('s3')?.value || 80) / 100;
+  if(masterGain) masterGain.gain.value = v1;
+  if(musicGain) musicGain.gain.value = v2 * 0.4;
+  if(sfxGain) sfxGain.gain.value = v3;
+}
+
+function playChord(freqs, duration) {
+  if (!audioCtx || audioCtx.state !== 'running') return;
+  freqs.forEach(f => {
+    let osc = audioCtx.createOscillator();
+    let g = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration - 0.05);
+    osc.connect(g);
+    g.connect(musicGain);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  });
+}
+
+function startChillMusic() {
+  if (musicTimer) clearTimeout(musicTimer);
+  isPlayingMusic = true;
+  let track = tracks[currentTrackIdx];
+  document.getElementById('musicTrack').innerText = "Đang phát: " + track.name;
+  
+  let chordStep = 0;
+  let duration = (60 / track.bpm) * 2;
+
+  function loop() {
+    if (!isPlayingMusic) return;
+    playChord(track.chords[chordStep], duration);
+    chordStep = (chordStep + 1) % track.chords.length;
+    
+    if (chordStep === 0 && Math.random() < 0.3) {
+      // Tự chuyển bài ngẫu nhiên khi hết 1 vòng lặp lớn
+      currentTrackIdx = (currentTrackIdx + 1) % tracks.length;
+      track = tracks[currentTrackIdx];
+      document.getElementById('musicTrack').innerText = "Đang phát: " + track.name;
+    }
+    musicTimer = setTimeout(loop, duration * 1000);
+  }
+  loop();
+}
+
+document.getElementById('nextTrack')?.addEventListener('click', () => {
+  currentTrackIdx = (currentTrackIdx + 1) % tracks.length;
+  startChillMusic();
+});
+
+['click', 'touchstart'].forEach(ev => addEventListener(ev, () => { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true }));
+
+// --- GAME LOGIC & GRAPHICS ENHANCEMENTS ---
+const cv=document.getElementById('c'),mg=cv.getContext('2d');let g=mg;
+const lo=document.createElement('canvas'),lg=lo.getContext('2d'),PX=3;
+let W,H;
+function rs(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;lo.width=Math.ceil(W/PX);lo.height=Math.ceil(H/PX);g.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',rs);rs();
+
+// Particles System
+let particles = [];
+function addParticle(x, y, color, size, vx, vy, life) {
+  particles.push({x, y, color, size, vx, vy, life, maxLife: life});
+}
+
+function updateAndDrawParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    let alpha = p.life / p.maxLife;
+    g.save();
+    g.globalAlpha = alpha;
+    g.fillStyle = p.color;
+    g.beginPath();
+    g.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    g.fill();
+    g.restore();
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+// Nâng cấp nét vẽ đền thờ Sukuna
+function drawSukunaShrine(x, y) {
+  g.save();
+  g.translate(x, y);
+  
+  // Nền âm khí
+  let grad = g.createRadialGradient(0, -60, 20, 0, -60, 180);
+  grad.addColorStop(0, 'rgba(180, 0, 30, 0.4)');
+  grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  g.fillStyle = grad;
+  g.beginPath(); g.arc(0, -60, 180, 0, Math.PI * 2); g.fill();
+
+  // Mái đền chính
+  g.fillStyle = '#1a0505';
+  g.strokeStyle = '#e53935';
+  g.lineWidth = 3;
+  
+  // Tầng mái trên
+  g.beginPath();
+  g.moveTo(-90, -100);
+  g.quadraticCurveTo(0, -130, 90, -100);
+  g.lineTo(70, -80);
+  g.quadraticCurveTo(0, -95, -70, -80);
+  g.closePath();
+  g.fill(); g.stroke();
+
+  // Tầng mái dưới
+  g.beginPath();
+  g.moveTo(-120, -60);
+  g.quadraticCurveTo(0, -90, 120, -60);
+  g.lineTo(90, -40);
+  g.quadraticCurveTo(0, -55, -90, -40);
+  g.closePath();
+  g.fill(); g.stroke();
+
+  // Cột đền & Sọ người hoa văn
+  g.fillStyle = '#2d0a0a';
+  g.fillRect(-60, -40, 15, 60);
+  g.fillRect(45, -40, 15, 60);
+  
+  // Đốm lửa tế lễ
+  let fireScale = 1 + Math.sin(Date.now() * 0.01) * 0.2;
+  g.fillStyle = '#ff5500';
+  g.beginPath(); g.arc(-52, -45, 8 * fireScale, 0, Math.PI*2); g.fill();
+  g.beginPath(); g.arc(52, -45, 8 * fireScale, 0, Math.PI*2); g.fill();
+
+  g.restore();
+}
+
+// Nâng cấp nét vẽ Lãnh địa Vô Lượng Không Xứ (Gojo)
+function drawGojoDomain(x, y, r) {
+  g.save();
+  let grad = g.createRadialGradient(x, y, 10, x, y, r);
+  grad.addColorStop(0, 'rgba(10, 15, 40, 0.9)');
+  grad.addColorStop(0.7, 'rgba(20, 60, 120, 0.7)');
+  grad.addColorStop(1, 'rgba(128, 216, 255, 0.3)');
+  
+  g.fillStyle = grad;
+  g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  
+  // Các ngôi sao lấp lánh bên trong
+  let time = Date.now() * 0.002;
+  g.fillStyle = '#ffffff';
+  for(let i = 0; i < 16; i++) {
+    let angle = i * 0.4 + time;
+    let dist = (i * 17) % (r - 20);
+    let sx = x + Math.cos(angle) * dist;
+    let sy = y + Math.sin(angle) * dist;
+    g.globalAlpha = Math.abs(Math.sin(time + i));
+    g.beginPath(); g.arc(sx, sy, 2, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+}
+
+// Giữ lại cấu trúc nhân vật ban đầu
+const CH=[
+{n:'Florentino',col:'#ff5fa2',at:['line','self','line'],melee:1,dashp:1,range:75,dmg:35,hp:900,cd:[5,7,30],ic:['🌸','🌀','💨'],sk:['Quăng bông: choáng 0,5s, rơi 3 bông','Chém vòng, lùi theo hướng; lụm bông hồi chiêu','Lướt, trúng rơi 3 bông, miễn khống 8s'],ps:'Nội tại: đánh thường lướt tới địch (hồi 6s, lụm bông hồi ngay), đánh thường hút máu 25% sát thương, mọi sát thương gây ra hút thêm 30% thành máu'},
+{n:'Xạ Thủ',col:'#4fc3f7',range:280,dmg:28,hp:700,cd:[4,6,10],ic:['🏹','🦘','☄️'],sk:['Tên xuyên xa','Lộn ra sau theo hướng','Mưa 5 mũi tên hình quạt'],ps:'Đánh thường bắn xa'},
+{n:'Pháp Sư',col:'#b388ff',range:250,dmg:30,hp:650,cd:[4,8,11],ic:['🔥','✨','🌪️'],sk:['Cầu lửa lớn','Dịch chuyển tức thời','Bão lửa quanh người + hồi máu'],ps:'Đánh thường bắn phép'}];
+CH.length=1;
+CH.push({n:'Valhein',at:['line','line','cone'],col:'#ffb74d',range:300,dmg:30,hp:750,cd:[4,9,22],ic:['🎯','🌟','🔫'],sk:['Phi tiêu đỏ, trúng nổ thêm 1 phát, +1 Thợ săn','Phi tiêu vàng choáng, +1 Thợ săn','Bão đạn: 6 viên, trúng nhiều giảm sát thương, tăng tốc đánh'],ps:'Nội tại: 3 đòn đánh thường bắn 1 phi tiêu ngẫu nhiên (lam/đỏ/vàng). Đánh thường trúng +1 Thợ săn (tối đa 6) tăng tốc đánh, 3s không thêm thì về 0'});
+CH.push({n:'Nak',at:['circle','back','cone'],col:'#7e57c2',melee:1,range:80,dmg:40,hp:800,cd:[4,6,16],ic:['🌀','⚡','🗡️'],sk:['Lướt chém 3 nhát, dùng được 2 lần (5s)','Lướt lùi, cường hóa đòn đánh: chém 2 lần','Quạt chém tầm ngắn liên tục 1,5s rồi hất tung, không di chuyển/xoay được'],ps:'Nội tại: đòn đánh thứ 4 hất tung, x1,25 sát thương'});
+CH.push({n:'Krixi',at:['line','circle','self'],col:'#f48fb1',range:280,dmg:30,hp:650,cd:[4,7,16],ic:['🔮','🍃','🌸'],sk:['Bướm ảo: ảnh bướm bay đi bay về gây sát thương 2 lượt','Bão lá: vòng tròn chọn vị trí, hất tung','Mưa sao băng: vòng quanh người, sao rơi nhanh vào địch trong vòng'],ps:'Nội tại Tung cánh: kỹ năng trúng đích tăng tốc chạy ngắn'});
+CH.push({n:'Toro',at:['line','self','self'],col:'#8d6e63',melee:1,range:85,dmg:38,hp:1400,cd:[5,9,20],ic:['🐂','🛡️','⛏️'],sk:['Húc: lướt gây 80 và choáng 0,8s','Gồng 3s: miễn khống, giáp ảo, nổ vòng tròn, không di chuyển/xoay được','Nhảy đập 3 lần (lần 3 cao x2, hất tung), chỉ di chuyển được lúc đang nhảy'],ps:'Mình đồng da sắt: vào giao tranh tăng dần chiến ý để nhận miễn thương (tới 25%). Đầy thanh thì tăng tốc đánh 5s. Rời giao tranh, chiến ý giảm dần và chuyển thành hồi máu'});
+CH.push({n:'Ngộ Không',at:['self','line','self'],col:'#ffca28',melee:1,range:85,dmg:42,crit:.3,hp:1000,cd:[12,6,20],ic:['👥','💨','🐵'],sk:['Phân thân dụ địch, tàng hình 5s','Lướt tới trước, tăng giáp 4s','Gậy như ý: quét xung quanh choáng, kích hoạt lại trong 5s để tàng hình và tăng tốc'],ps:'Vô địch thiên hạ: sau mỗi chiêu, đòn đánh thường kế tiếp mạnh hơn và áp sát địch; sẵn 30% chí mạng'});
+CH.push({n:'Tamyn',col:'#ffd54f',at:['line','circle','self'],melee:1,range:90,dmg:40,hp:950,cd:[5,8,12],ic:['🔱','🌇','↩️'],sk:['Phóng thương tầm ngắn, trúng thì rơi ngay chỗ địch','Thương từ trời ghim xuống vị trí chọn: sát thương và làm chậm Boss 2s, cắm 10s','Triệu hồi 1 thương gần nhất bay về người, gây sát thương dọc đường'],ps:'Nội tại: nhặt thương (tối đa 2, giữ 4s) để tăng tốc chạy. Khi cầm thương, đánh thường là lướt tới theo hướng di chuyển, địch bị lướt ngang chịu sát thương, giảm 1s hồi chiêu, hồi máu, và mất 1 thương. Mỗi chiêu +2% tốc chạy (tối đa 3 lần). Thương tự bay về sau 10s'});
+CH.push({n:'Natalya',col:'#7cb342',at:['circle','line','line'],range:260,dmg:30,hp:700,cd:[6,9,18],ic:['👻','🌑','☠️'],sk:['Ác Quỷ Tụ Hội: 5 cầu hồn sau lưng bay tới điểm chỉ định','Quả Cầu Hắc Ám: quăng cầu nhỏ bay một đoạn rồi phình ra','Tia Sáng Tử Vong: tia gây sát thương liên tục'],ps:'Âm hoả: dùng kỹ năng gây thêm sát thương phép cho địch'});
+CH.push({n:'Veera',col:'#e040fb',at:['line','line','self'],range:270,dmg:45,hp:650,cd:[5,9,18],ic:['🦇','💋','👿'],sk:['Dơi Địa Ngục: ném dơi gây sát thương','Hôn Gió: choáng 1,5s','Tiểu Quỷ: 5 tiểu quỷ bay tới địch'],ps:'Mê Hoặc: tăng tốc chạy khi thoát giao tranh'});
+CH.push({n:'Arthur',col:'#ffd54f',melee:1,range:85,dmg:45,hp:1100,at:['self','self','circle'],cd:[10,14,24],ic:['⚔️','🛡️','🗡️'],sk:['Gươm chính nghĩa: tăng tốc, đòn tiếp theo lao tới câm lặng','Thần vật hộ thân: 3 kiếm xoay quanh người','Công lý phán quyết: nhảy tới cắm kiếm hất tung'],ps:'Uy dũng: tự hồi máu liên tục'});
+
+// UI & Menu Interactivity
+document.getElementById('gear').onclick = () => {
+  initAudio();
+  document.getElementById('set').classList.remove('hide');
+};
+document.getElementById('sOk').onclick = () => {
+  document.getElementById('set').classList.add('hide');
+};
+document.getElementById('s1').oninput = updateVolumes;
+document.getElementById('s2').oninput = updateVolumes;
+document.getElementById('s3').oninput = updateVolumes;
+
+function toMenu() {
+  document.getElementById('end').classList.add('hide');
+  document.getElementById('menu').classList.remove('hide');
+  document.getElementById('gear').style.display = 'none';
+}
+
+// Khởi chạy hệ thống cơ bản
+initAudio();
+</script>
+</body>
+</html>
